@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>KPIX - AI Business Anomaly Intelligence</title>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 28px 45px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+        .header p {
+            margin: 8px 0 0;
+            color: #cbd5e1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: auto;
+            padding: 35px 45px;
+        }
+
+        .intro {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        .intro h2 {
+            margin-top: 0;
+        }
+
+        .intro p {
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        button {
+            border: none;
+            padding: 13px 22px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .analyze-btn {
+            background: #2563eb;
+            color: white;
+        }
+
+        .generate-btn {
+            background: #0f766e;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .section {
+            margin-top: 35px;
+        }
+
+        .section h2 {
+            margin-bottom: 18px;
+        }
+
+        /* KPI CARDS */
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 18px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        .card h3 {
+            margin: 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .card p {
+            margin: 12px 0 0;
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .anomaly-card {
+            border-left: 5px solid #dc2626;
+            max-width: 300px;
+        }
+
+        .anomaly-card p {
+            color: #dc2626;
+        }
+
+        /* CHARTS */
+
+        .charts {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 22px;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        .chart-card h3 {
+            margin-top: 0;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 320px;
+        }
+
+        /* TABLE */
+
+        .table-container {
+            overflow-x: auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #111827;
+            color: white;
+            padding: 14px;
+            text-align: left;
+        }
+
+        td {
+            padding: 13px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        /* AI SECTIONS */
+
+        .insight {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid #2563eb;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        .recommendation {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid #0f766e;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        .insight p,
+        .recommendation p {
+            font-size: 16px;
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        /* ASK KPIX */
+
+        .ask-input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .ask-input:focus {
+            border-color: #2563eb;
+        }
+
+        .ask-answer {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid #2563eb;
+        }
+
+        .ask-answer-title {
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .ask-answer-text {
+            font-size: 16px;
+            line-height: 1.7;
+            color: #374151;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 35px;
+            color: #64748b;
+        }
+
+        @media (max-width: 1000px) {
+            .dashboard {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .charts {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header {
+                padding: 25px 20px;
+            }
+
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>KPIX</h1>
+    <p>AI-Powered Business Anomaly Intelligence</p>
+</div>
+
+
+<div class="container">
+
+    <!-- INTRO -->
+
+    <div class="intro">
+
+        <h2>Business Intelligence Dashboard</h2>
+
+        <p>
+            KPIX analyzes business sales data, detects anomalies,
+            identifies high-impact patterns, and generates
+            AI-powered business insights and recommendations.
+        </p>
+
+        <div class="buttons">
+
+            <form action="/analyze" method="POST">
+                <button class="analyze-btn" type="submit">
+                    Run KPIX Analysis
+                </button>
+            </form>
+
+            <form action="/generate-data" method="POST">
+                <button class="generate-btn" type="submit">
+                    🔄 Generate New Data
+                </button>
+            </form>
+
+        </div>
+
+    </div>
+
+
+    {% if analyzed %}
+
+    <!-- KPIs -->
+
+    <div class="section">
+
+        <h2>📊 Business KPIs</h2>
+
+        <div class="dashboard">
+
+            <div class="card">
+                <h3>Total Sales</h3>
+                <p>{{ kpis["total_sales"] }}</p>
+            </div>
+
+            <div class="card">
+                <h3>Total Revenue</h3>
+                <p>{{ "%.2f"|format(kpis["total_revenue"]) }}</p>
+            </div>
+
+            <div class="card">
+                <h3>Average Sale</h3>
+                <p>{{ "%.2f"|format(kpis["average_sale"]) }}</p>
+            </div>
+
+            <div class="card">
+                <h3>Total Quantity</h3>
+                <p>{{ kpis["total_quantity"] }}</p>
+            </div>
+
+            <div class="card">
+                <h3>Unique Customers</h3>
+                <p>{{ kpis["unique_customers"] }}</p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ANOMALIES -->
+
+    <div class="section">
+
+        <h2>🚨 Anomaly Detection</h2>
+
+        <div class="card anomaly-card">
+
+            <h3>Anomalies Detected</h3>
+
+            <p>{{ anomaly_count }}</p>
+
+        </div>
+
+    </div>
+
+
+    <!-- CHARTS -->
+
+    <div class="section">
+
+        <h2>📈 Business Analytics</h2>
+
+        <div class="charts">
+
+            <div class="chart-card">
+
+                <h3>Revenue by Region</h3>
+
+                <div class="chart-container">
+
+                    <canvas id="regionChart"></canvas>
+
+                </div>
+
+            </div>
+
+
+            <div class="chart-card">
+
+                <h3>Anomalies by Category</h3>
+
+                <div class="chart-container">
+
+                    <canvas id="categoryChart"></canvas>
+
+                </div>
+
+            </div>
+
+
+            <div class="chart-card">
+
+                <h3>Top Anomaly Revenue by Product</h3>
+
+                <div class="chart-container">
+
+                    <canvas id="productChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- BUSINESS INCIDENT CARDS -->
+
+    <div class="section">
+
+        <h2>🚨 Business Incident Cards</h2>
+
+        <div class="charts">
+
+            {% for incident in incidents %}
+
+            <div class="card">
+
+                <h3>
+                    {{ incident["severity"] }} — {{ incident["product"] }}
+                </h3>
+
+                <p>
+                    <strong>Region:</strong>
+                    {{ incident["region"] }}
+                </p>
+
+                <p>
+                    <strong>Category:</strong>
+                    {{ incident["category"] }}
+                </p>
+
+                <p>
+                    <strong>Revenue:</strong>
+                    {{ "%.2f"|format(incident["revenue"]) }}
+                </p>
+
+                <p>
+                    <strong>Impact Score:</strong>
+                    {{ "%.2f"|format(incident["impact_score"]) }}
+                </p>
+
+                <p>
+                    <strong>Date:</strong>
+                    {{ incident["sale_date"] }}
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+    <!-- TOP ANOMALIES -->
+
+    <div class="section">
+
+        <h2>🔎 Top Business Anomalies</h2>
+
+        <div class="table-container">
+
+            <table>
+
+                <tr>
+                    <th>ID</th>
+                    <th>Region</th>
+                    <th>Category</th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Revenue</th>
+                </tr>
+
+                {% for row in anomalies %}
+
+                <tr>
+
+                    <td>{{ row["id"] }}</td>
+                    <td>{{ row["region"] }}</td>
+                    <td>{{ row["category"] }}</td>
+                    <td>{{ row["product"] }}</td>
+                    <td>{{ row["quantity"] }}</td>
+                    <td>{{ "%.2f"|format(row["unit_price"]) }}</td>
+                    <td>{{ "%.2f"|format(row["revenue"]) }}</td>
+
+                </tr>
+
+                {% endfor %}
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- ASK KPIX -->
+
+    <div class="section">
+
+        <h2>💬 Ask KPIX</h2>
+
+        <div class="insight">
+
+            <form action="/ask-kpix" method="POST">
+
+                <input
+                    type="text"
+                    name="question"
+                    class="ask-input"
+                    value="{{ question | default('') }}"
+                    placeholder="Ask KPIX about your business data..."
+                    required
+                >
+
+                <button
+                    type="submit"
+                    class="analyze-btn"
+                    style="margin-top: 12px;"
+                >
+                    Ask KPIX
+                </button>
+
+            </form>
+
+
+            {% if answer is defined and answer %}
+
+            <div class="ask-answer">
+
+                <div class="ask-answer-title">
+                    🤖 KPIX Answer
+                </div>
+
+                <div class="ask-answer-text">
+                    {{ answer }}
+                </div>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- AI INSIGHT -->
+
+    <div class="section">
+
+        <h2>🤖 AI Business Insight</h2>
+
+        <div class="insight">
+
+            <p>
+                {{ ai_insight }}
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- RECOMMENDATION -->
+
+    <div class="section">
+
+        <h2>💡 Business Recommendation</h2>
+
+        <div class="recommendation">
+
+            <p>
+                {{ recommendation }}
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- CHART JAVASCRIPT -->
+
+    <script>
+
+        const regionLabels = {{ region_labels | tojson }};
+        const regionValues = {{ region_values | tojson }};
+
+        const categoryLabels = {{ category_labels | tojson }};
+        const categoryValues = {{ category_values | tojson }};
+
+        const productLabels = {{ product_labels | tojson }};
+        const productValues = {{ product_values | tojson }};
+
+
+        // Revenue by Region
+
+        new Chart(
+            document.getElementById("regionChart"),
+            {
+                type: "bar",
+
+                data: {
+                    labels: regionLabels,
+
+                    datasets: [{
+                        label: "Revenue",
+                        data: regionValues
+                    }]
+                },
+
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            }
+        );
+
+
+        // Anomalies by Category
+
+        new Chart(
+            document.getElementById("categoryChart"),
+            {
+                type: "doughnut",
+
+                data: {
+                    labels: categoryLabels,
+
+                    datasets: [{
+                        label: "Anomalies",
+                        data: categoryValues
+                    }]
+                },
+
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            }
+        );
+
+
+        // Anomaly Revenue by Product
+
+        new Chart(
+            document.getElementById("productChart"),
+            {
+                type: "bar",
+
+                data: {
+                    labels: productLabels,
+
+                    datasets: [{
+                        label: "Anomaly Revenue",
+                        data: productValues
+                    }]
+                },
+
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            }
+        );
+
+    </script>
+
+    {% endif %}
+
+</div>
+
+
+<div class="footer">
+    KPIX — AI-Powered Business Anomaly Intelligence
+</div>
+
+</body>
+</html>

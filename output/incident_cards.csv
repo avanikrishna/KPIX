@@ -1,0 +1,11 @@
+id,sale_date,region,category,product,revenue,impact_score,severity
+2028,2024-10-23,West,Electronics,Laptop,777699.36,82.76,HIGH
+2404,2024-12-16,South,Clothing,Chair,449260.92,81.23,HIGH
+4625,2025-11-06,West,Clothing,Phone,449898.75,80.01,HIGH
+1090,2024-06-08,North,Food,Phone,447646.59,74.59,MEDIUM
+1730,2024-09-09,South,Clothing,Chair,444165.66,72.17,MEDIUM
+3299,2025-04-26,West,Electronics,Shirt,442015.74,70.47,MEDIUM
+3944,2025-07-29,West,Electronics,Laptop,494708.76,70.27,MEDIUM
+3574,2025-06-05,South,Furniture,Skincare,448166.52,70.24,MEDIUM
+3903,2025-07-23,Central,Food,Coffee,444829.59,69.07,MEDIUM
+2916,2025-03-01,East,Beauty,Skincare,446546.34,68.2,MEDIUM
